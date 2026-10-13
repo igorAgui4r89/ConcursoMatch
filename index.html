@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ConcursoMatch ajuda candidatos a encontrar concursos públicos compatíveis com seu perfil, formação, interesses e faixa salarial.">
+    <title>ConcursoMatch | Encontre concursos compatíveis com você</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================================================
+         CABEÇALHO
+         ========================================================= -->
+    <header class="site-header">
+        <div class="container header-content">
+
+            <!-- Espaço reservado para a identidade visual do projeto -->
+            <a class="brand" href="#" aria-label="ConcursoMatch - página inicial">
+                <img
+                    class="brand-logo"
+                    src="assets/logo-placeholder.svg"
+                    alt="Logo provisória do ConcursoMatch"
+                >
+
+                <div class="brand-text">
+                    <strong>ConcursoMatch</strong>
+                    <span>Seu próximo concurso pode estar aqui.</span>
+                </div>
+            </a>
+
+            <nav class="header-nav" aria-label="Navegação principal">
+                <a href="#como-funciona">Como funciona</a>
+                <a class="nav-highlight" href="#perfil">Criar meu perfil</a>
+            </nav>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- =========================================================
+             APRESENTAÇÃO DO SERVIÇO
+             ========================================================= -->
+        <section class="hero" id="como-funciona">
+
+            <div class="container hero-grid">
+
+                <div class="hero-content">
+
+                    <span class="eyebrow">Concursos que combinam com o seu perfil</span>
+
+                    <h1>
+                        Ficou mais fácil encontrar e não perder
+                        <span>aquele concurso tão esperado.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Cadastre suas formações, áreas de interesse, faixa salarial
+                        e cargos desejados. O ConcursoMatch foi pensado para cruzar
+                        seu perfil com oportunidades compatíveis e, nas próximas
+                        etapas do projeto, avisar você quando surgir um concurso
+                        que faça sentido para a sua carreira.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a class="button button-primary" href="#perfil">
+                            Montar meu perfil
+                        </a>
+
+                        <a class="button button-secondary" href="#beneficios">
+                            Ver benefícios
+                        </a>
+                    </div>
+
+                    <ul class="hero-highlights" aria-label="Principais benefícios">
+                        <li>Perfil com múltiplas formações</li>
+                        <li>Mais de uma área de interesse</li>
+                        <li>Faixa salarial personalizada</li>
+                        <li>Cargos desejados sem limitar o matching</li>
+                    </ul>
+
+                </div>
+
+
+                <aside class="hero-card" aria-label="Exemplo de recomendação futura">
+
+                    <div class="hero-card-header">
+                        <span>Exemplo de recomendação</span>
+                        <span class="match-badge">92% compatível</span>
+                    </div>
+
+                    <div class="job-preview">
+                        <div>
+                            <span class="job-label">Cargo</span>
+                            <strong>Gerente de Projetos de TI</strong>
+                        </div>
+
+                        <div>
+                            <span class="job-label">Órgão</span>
+                            <strong>Órgão público fictício</strong>
+                        </div>
+
+                        <div class="preview-grid">
+                            <div>
+                                <span class="job-label">Salário</span>
+                                <strong>R$ 18.500</strong>
+                            </div>
+
+                            <div>
+                                <span class="job-label">Local</span>
+                                <strong>Minas Gerais</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="compatibility-list">
+                        <span>✓ Formação compatível</span>
+                        <span>✓ Área de interesse compatível</span>
+                        <span>✓ Dentro da faixa salarial</span>
+                    </div>
+
+                    <p class="hero-card-note">
+                        Esta é apenas uma prévia visual. O motor de matching será
+                        implementado nas próximas etapas.
+                    </p>
+
+                </aside>
+
+            </div>
+        </section>
+
+
+        <!-- =========================================================
+             BENEFÍCIOS
+             ========================================================= -->
+        <section class="benefits" id="beneficios">
+
+            <div class="container">
+
+                <div class="section-heading">
+                    <span class="eyebrow">Por que usar?</span>
+                    <h2>Menos tempo procurando. Mais oportunidades relevantes.</h2>
+                    <p>
+                        A proposta é transformar um grande volume de editais em
+                        recomendações mais próximas da realidade de cada candidato.
+                    </p>
+                </div>
+
+                <div class="benefit-grid">
+
+                    <article class="benefit-card">
+                        <div class="benefit-icon" aria-hidden="true">01</div>
+                        <h3>Perfil completo</h3>
+                        <p>
+                            Informe mais de uma formação e diferentes áreas de
+                            interesse sem precisar escolher apenas uma trajetória.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <div class="benefit-icon" aria-hidden="true">02</div>
+                        <h3>Faixa salarial</h3>
+                        <p>
+                            Defina um intervalo de remuneração, por exemplo entre
+                            R$ 5 mil e R$ 30 mil, em vez de um único valor fixo.
+                        </p>
+                    </article>
+
+                    <article class="benefit-card">
+                        <div class="benefit-icon" aria-hidden="true">03</div>
+                        <h3>Cargo dos sonhos</h3>
+                        <p>
+                            Registre cargos específicos que gostaria de acompanhar.
+                            Esse campo ajuda a destacar oportunidades, sem excluir
+                            outros concursos compatíveis.
+                        </p>
+                    </article>
+
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- =========================================================
+             FORMULÁRIO DE PERFIL
+             ========================================================= -->
+        <section class="profile-section" id="perfil">
+
+            <div class="container">
+
+                <div class="section-heading profile-heading">
+                    <span class="eyebrow">Seu perfil</span>
+                    <h2>Conte o que você procura.</h2>
+                    <p>
+                        Nesta primeira versão, os dados ficam apenas no navegador
+                        durante a demonstração. Banco de dados, autenticação e
+                        alertas serão adicionados depois.
+                    </p>
+                </div>
+
+
+                <form class="profile-form" id="profileForm">
+
+                    <!-- FORMAÇÕES -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">1</span>
+                                <div>
+                                    <legend>Formações</legend>
+                                    <p>Você pode cadastrar mais de uma graduação ou formação.</p>
+                                </div>
+                            </div>
+
+                            <button
+                                class="small-button"
+                                type="button"
+                                id="addEducation"
+                            >
+                                + Adicionar formação
+                            </button>
+                        </div>
+
+                        <div class="dynamic-list" id="educationList">
+
+                            <div class="dynamic-row" data-dynamic-row>
+                                <div class="field field-grow">
+                                    <label for="education-1">Formação</label>
+                                    <input
+                                        id="education-1"
+                                        name="education[]"
+                                        type="text"
+                                        placeholder="Ex.: Direito"
+                                        autocomplete="off"
+                                    >
+                                </div>
+
+                                <button
+                                    class="remove-button"
+                                    type="button"
+                                    aria-label="Remover formação"
+                                    data-remove-row
+                                    disabled
+                                >
+                                    Remover
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- ÁREAS DE INTERESSE -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">2</span>
+                                <div>
+                                    <legend>Áreas de interesse</legend>
+                                    <p>
+                                        Marque quantas áreas fizerem sentido. Se não marcar nenhuma,
+                                        o sistema entenderá que a área não deve limitar as recomendações.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Jurídica e Direito">
+                                <span>Jurídica e Direito</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Tribunais">
+                                <span>Tribunais</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Administrativa">
+                                <span>Administrativa</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Policial e Segurança Pública">
+                                <span>Policial e Segurança Pública</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Fiscal e Tributária">
+                                <span>Fiscal e Tributária</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Controle e Auditoria">
+                                <span>Controle e Auditoria</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Tecnologia da Informação">
+                                <span>Tecnologia da Informação</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Dados e Inteligência Artificial">
+                                <span>Dados e Inteligência Artificial</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Gestão e Projetos">
+                                <span>Gestão e Projetos</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Educação e Professor Universitário">
+                                <span>Educação / Professor Universitário</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Saúde">
+                                <span>Saúde</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Bancária e Financeira">
+                                <span>Bancária e Financeira</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Legislativa">
+                                <span>Legislativa</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Engenharia e Arquitetura">
+                                <span>Engenharia e Arquitetura</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Militar">
+                                <span>Militar</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="interest[]" value="Previdenciária e Seguridade Social">
+                                <span>Previdenciária / Seguridade Social</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- SALÁRIO -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">3</span>
+                                <div>
+                                    <legend>Faixa salarial desejada</legend>
+                                    <p>
+                                        Campo opcional. Você pode informar apenas o mínimo,
+                                        apenas o máximo, os dois valores ou deixar em branco.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="salary-grid">
+
+                            <div class="field">
+                                <label for="salaryMin">Salário mínimo</label>
+
+                                <div class="money-input">
+                                    <span>R$</span>
+                                    <input
+                                        id="salaryMin"
+                                        name="salaryMin"
+                                        type="number"
+                                        min="0"
+                                        step="500"
+                                        placeholder="Ex.: 5000"
+                                        inputmode="numeric"
+                                    >
+                                </div>
+                            </div>
+
+                            <div class="salary-separator" aria-hidden="true">até</div>
+
+                            <div class="field">
+                                <label for="salaryMax">Salário máximo</label>
+
+                                <div class="money-input">
+                                    <span>R$</span>
+                                    <input
+                                        id="salaryMax"
+                                        name="salaryMax"
+                                        type="number"
+                                        min="0"
+                                        step="500"
+                                        placeholder="Ex.: 30000"
+                                        inputmode="numeric"
+                                    >
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- CARGOS DESEJADOS -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">4</span>
+                                <div>
+                                    <legend>Cargos que você gostaria de acompanhar</legend>
+                                    <p>
+                                        Campo adicional: ajuda a destacar vagas,
+                                        mas não deve excluir outros concursos compatíveis.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <button
+                                class="small-button"
+                                type="button"
+                                id="addTargetRole"
+                            >
+                                + Adicionar cargo
+                            </button>
+                        </div>
+
+                        <div class="dynamic-list" id="targetRoleList">
+
+                            <div class="dynamic-row" data-dynamic-row>
+                                <div class="field field-grow">
+                                    <label for="target-role-1">Cargo desejado</label>
+                                    <input
+                                        id="target-role-1"
+                                        name="targetRole[]"
+                                        type="text"
+                                        placeholder="Ex.: Gerente de Projetos de TI"
+                                        autocomplete="off"
+                                    >
+                                </div>
+
+                                <button
+                                    class="remove-button"
+                                    type="button"
+                                    aria-label="Remover cargo desejado"
+                                    data-remove-row
+                                    disabled
+                                >
+                                    Remover
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- LOCALIZAÇÃO -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">5</span>
+                                <div>
+                                    <legend>Regiões de interesse</legend>
+                                    <p>
+                                        Escolha uma ou mais regiões. Se nenhuma for marcada,
+                                        qualquer região poderá ser considerada.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid checkbox-grid-five">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="region[]" value="Norte">
+                                <span>Norte</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="region[]" value="Nordeste">
+                                <span>Nordeste</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="region[]" value="Centro-Oeste">
+                                <span>Centro-Oeste</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="region[]" value="Sudeste">
+                                <span>Sudeste</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="region[]" value="Sul">
+                                <span>Sul</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- INSTITUIÇÕES -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">6</span>
+                                <div>
+                                    <legend>Instituições de interesse</legend>
+                                    <p>
+                                        Filtro opcional. Marque apenas se quiser priorizar certos órgãos
+                                        ou tipos de instituição.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="INSS">
+                                <span>INSS</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Receita Federal">
+                                <span>Receita Federal</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Universidades e Institutos Federais">
+                                <span>Universidades / IFs</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Tribunais">
+                                <span>Tribunais</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Polícias e Segurança">
+                                <span>Polícias / Segurança</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="SEFAZ e Fiscos">
+                                <span>SEFAZ / Fiscos</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Tribunais de Contas e Controladorias">
+                                <span>Tribunais de Contas / Controladorias</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Legislativo">
+                                <span>Câmaras / Assembleias / Congresso</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Bancos Públicos">
+                                <span>Bancos públicos</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Prefeituras">
+                                <span>Prefeituras</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Agências Reguladoras e Autarquias">
+                                <span>Agências / Autarquias</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="institution[]" value="Ministérios e Administração Direta">
+                                <span>Ministérios / Administração Direta</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- ESFERA -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">7</span>
+                                <div>
+                                    <legend>Esfera</legend>
+                                    <p>
+                                        Filtro opcional. Se nenhuma opção for marcada,
+                                        concursos de qualquer esfera poderão aparecer.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid checkbox-grid-three">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="governmentLevel[]" value="Federal">
+                                <span>Federal</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="governmentLevel[]" value="Estadual">
+                                <span>Estadual</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="governmentLevel[]" value="Municipal">
+                                <span>Municipal</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- REGIME -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">8</span>
+                                <div>
+                                    <legend>Regime de contratação</legend>
+                                    <p>
+                                        Filtro opcional. Sem seleção significa que o regime é indiferente.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid checkbox-grid-three">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="employmentRegime[]" value="Estatutário">
+                                <span>Estatutário</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="employmentRegime[]" value="CLT">
+                                <span>Celetista (CLT)</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="employmentRegime[]" value="Temporário">
+                                <span>Temporário</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <!-- ESCOLARIDADE -->
+                    <fieldset class="form-card">
+
+                        <div class="form-card-heading">
+                            <div>
+                                <span class="step-number">9</span>
+                                <div>
+                                    <legend>Nível de escolaridade das vagas</legend>
+                                    <p>
+                                        Outro filtro opcional útil para evitar resultados que não
+                                        correspondam ao nível de vaga procurado.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="checkbox-grid">
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Fundamental">
+                                <span>Fundamental</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Médio">
+                                <span>Médio</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Técnico">
+                                <span>Técnico</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Superior">
+                                <span>Superior</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Pós-graduação">
+                                <span>Pós-graduação / Especialização</span>
+                            </label>
+
+                            <label class="check-card">
+                                <input type="checkbox" name="educationLevel[]" value="Mestrado ou Doutorado">
+                                <span>Mestrado / Doutorado</span>
+                            </label>
+
+                        </div>
+
+                    </fieldset>
+
+
+                    <div class="optional-filter-note">
+                        <strong>Como os filtros opcionais funcionarão?</strong>
+                        <p>
+                            Se você não marcar nenhuma opção em uma categoria, o sistema
+                            entenderá que aquele critério é indiferente e não deverá reduzir
+                            as recomendações.
+                        </p>
+                    </div>
+
+
+                    <div class="form-submit-area">
+
+                        <div>
+                            <strong>Seu perfil será usado no matching.</strong>
+                            <p>
+                                Os filtros não preenchidos serão considerados indiferentes.
+                                Os cargos desejados funcionam como bônus de relevância.
+                            </p>
+                        </div>
+
+                        <button class="button button-primary" type="submit">
+                            Encontrar concursos
+                        </button>
+
+                    </div>
+
+                    <p class="form-message" id="formMessage" role="status" aria-live="polite"></p>
+
+                </form>
+
+            </div>
+        </section>
+
+        <!-- =========================================================
+             RESULTADOS DO MATCHING
+             ========================================================= -->
+        <section class="results-section" id="resultados">
+
+            <div class="container">
+
+                <div class="results-heading">
+                    <div>
+                        <span class="eyebrow">Primeiro motor de matching</span>
+                        <h2>Concursos compatíveis com o seu perfil</h2>
+                        <p>
+                            Os concursos abaixo são dados demonstrativos criados apenas para
+                            testar a lógica do sistema. Nenhum card desta versão representa
+                            uma oportunidade real em andamento.
+                        </p>
+                    </div>
+
+                    <span class="demo-badge">DADOS FICTÍCIOS</span>
+                </div>
+
+                <div class="results-summary" id="resultsSummary">
+                    Preencha o perfil e clique em <strong>Salvar perfil</strong> para gerar recomendações.
+                </div>
+
+                <div class="results-grid" id="resultsGrid">
+                    <!-- Os cards são criados pelo JavaScript. -->
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================================================
+         RODAPÉ
+         ========================================================= -->
+    <footer class="site-footer">
+
+        <div class="container footer-content">
+            <div>
+                <strong>ConcursoMatch</strong>
+                <p>Projeto de estudo e portfólio.</p>
+            </div>
+
+            <p>
+                HTML • CSS • JavaScript • Git • GitHub
+            </p>
+        </div>
+
+    </footer>
+
+
+    <script src="script.js"></script>
+
+</body>
+</html>
