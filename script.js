@@ -15,6 +15,252 @@
 // - o resultado mostra os motivos do match.
 
 
+
+// =========================================================
+// CONEXÃO COM O SUPABASE
+// =========================================================
+
+// Endereço do projeto
+const SUPABASE_URL =
+    "https://ohoxtfmnkaihzmzcfjlp.supabase.co";
+
+// Chave pública de acesso
+const SUPABASE_KEY =
+    "sb_publishable_sndA8M3INb4AxiVsfiW1BA_Zkt2iTS1";
+
+// Inicializa o cliente Supabase
+const clienteSupabase = supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+// =========================================================
+// TESTE DE CONSULTA AO BANCO
+// =========================================================
+
+async function testarConexaoSupabase() {
+
+    try {
+
+        // Busca cargos e os concursos relacionados
+        const { data, error } = await clienteSupabase
+            .from("vagas")
+            .select(`
+                id,
+                cargo,
+                salario,
+                estado,
+                cidade,
+                area,
+                escolaridade,
+                regime,
+                formacao_exigida,
+                concursos (
+                    nome,
+                    instituicao,
+                    esfera
+                )
+            `);
+
+        // Interrompe em caso de erro
+        if (error) {
+            throw error;
+        }
+
+        // Mostra os registros recebidos
+        console.log(
+            "ConcursoMatch - Vagas do Supabase:",
+            data
+        );
+
+        console.log(
+            "Total de vagas encontradas:",
+            data.length
+        );
+
+
+
+// ==========================================
+// TESTE DA CONVERSÃO DOS DADOS
+// ==========================================
+
+// Converte cada vaga para o formato
+// utilizado pelo algoritmo do ConcursoMatch.
+const vagasAdaptadas = data.map(adaptarVagaSupabase);
+
+// Mostra os dados convertidos no Console.
+console.log(
+    "Vagas adaptadas para o matching:",
+    vagasAdaptadas
+);
+
+// Exibe uma tabela para facilitar a conferência.
+console.table(vagasAdaptadas);
+
+
+    } catch (erro) {
+
+        // Exibe detalhes do problema no console
+        console.error(
+            "Erro na integração com Supabase:",
+            erro
+        );
+
+    }
+
+}
+
+
+
+// =========================================================
+// CONCURSOMATCH
+// ADAPTAÇÃO DOS DADOS DO SUPABASE
+// =========================================================
+
+// Converte a sigla do estado para a região brasileira.
+function identificarRegiao(estado) {
+
+    const regioes = {
+        AC: "Norte",
+        AP: "Norte",
+        AM: "Norte",
+        PA: "Norte",
+        RO: "Norte",
+        RR: "Norte",
+        TO: "Norte",
+
+        AL: "Nordeste",
+        BA: "Nordeste",
+        CE: "Nordeste",
+        MA: "Nordeste",
+        PB: "Nordeste",
+        PE: "Nordeste",
+        PI: "Nordeste",
+        RN: "Nordeste",
+        SE: "Nordeste",
+
+        DF: "Centro-Oeste",
+        GO: "Centro-Oeste",
+        MT: "Centro-Oeste",
+        MS: "Centro-Oeste",
+
+        ES: "Sudeste",
+        MG: "Sudeste",
+        RJ: "Sudeste",
+        SP: "Sudeste",
+
+        PR: "Sul",
+        RS: "Sul",
+        SC: "Sul"
+    };
+
+    // Retorna a região ou "Não informada".
+    return regioes[estado?.toUpperCase()] ??
+        "Não informada";
+}
+
+
+// Converte uma vaga do banco para o formato
+// utilizado pelo algoritmo atual.
+function adaptarVagaSupabase(vaga) {
+
+    // Padroniza os nomes das áreas.
+    const areas = {
+        "Tecnologia": "Tecnologia da Informação",
+        "Administracao": "Administrativa",
+        "Administração": "Administrativa"
+    };
+
+    // Padroniza o nível de escolaridade.
+    const escolaridades = {
+        "Tecnico": "Técnico",
+        "Técnico": "Técnico",
+        "Superior": "Superior"
+    };
+
+    // Padroniza o regime de contratação.
+    const regimes = {
+        "Estatutario": "Estatutário",
+        "Estatutário": "Estatutário",
+        "CLT": "CLT",
+        "Temporario": "Temporário"
+    };
+
+    // Obtém o texto da formação exigida.
+    const formacao = vaga.formacao_exigida ?? "";
+
+    return {
+
+        // Mantém o identificador original do banco.
+        id: vaga.id,
+
+        // Nome da instituição responsável.
+        // Ainda precisaremos classificar a categoria
+        // institucional utilizada nos filtros.
+        institution: vaga.concursos?.instituicao ?? "",
+
+        // Nome exibido nos resultados.
+        agency: vaga.concursos?.instituicao ?? "",
+
+        // Cargo oferecido.
+        role: vaga.cargo,
+
+        // Área profissional.
+        area: areas[vaga.area] ?? vaga.area,
+
+        // Converte MG, RJ, SP etc. em regiões.
+        region: identificarRegiao(vaga.estado),
+
+        // Esfera administrativa.
+        governmentLevel:
+            vaga.concursos?.esfera ?? "",
+
+        // Regime de contratação.
+        employmentRegime:
+            regimes[vaga.regime] ?? vaga.regime,
+
+        // Escolaridade exigida.
+        educationLevel:
+            escolaridades[vaga.escolaridade] ??
+            vaga.escolaridade,
+
+        // Converte o salário para número.
+        salary: vaga.salario === null
+            ? null
+            : Number(vaga.salario),
+
+        // Palavras utilizadas pelo algoritmo
+        // atual para comparar formações.
+        // Esta é uma aproximação inicial.
+        formationKeywords: formacao
+            ? [formacao]
+            : [],
+
+        // Informações adicionais do Supabase.
+        city: vaga.cidade,
+        state: vaga.estado,
+        contestName: vaga.concursos?.nome ?? ""
+
+    };
+}
+
+
+// Executa o teste quando o site é carregado
+testarConexaoSupabase();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const educationList = document.getElementById("educationList");
 const addEducationButton = document.getElementById("addEducation");
 
