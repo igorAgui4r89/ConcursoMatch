@@ -34,83 +34,6 @@ const clienteSupabase = supabase.createClient(
     SUPABASE_KEY
 );
 
-// =========================================================
-// TESTE DE CONSULTA AO BANCO
-// =========================================================
-
-async function testarConexaoSupabase() {
-
-    try {
-
-        // Busca cargos e os concursos relacionados
-        const { data, error } = await clienteSupabase
-            .from("vagas")
-            .select(`
-                id,
-                cargo,
-                salario,
-                estado,
-                cidade,
-                area,
-                escolaridade,
-                regime,
-                formacao_exigida,
-                concursos (
-                    nome,
-                    instituicao,
-                    esfera
-                )
-            `);
-
-        // Interrompe em caso de erro
-        if (error) {
-            throw error;
-        }
-
-        // Mostra os registros recebidos
-        console.log(
-            "ConcursoMatch - Vagas do Supabase:",
-            data
-        );
-
-        console.log(
-            "Total de vagas encontradas:",
-            data.length
-        );
-
-
-
-// ==========================================
-// TESTE DA CONVERSÃO DOS DADOS
-// ==========================================
-
-// Converte cada vaga para o formato
-// utilizado pelo algoritmo do ConcursoMatch.
-const vagasAdaptadas = data.map(adaptarVagaSupabase);
-
-// Mostra os dados convertidos no Console.
-console.log(
-    "Vagas adaptadas para o matching:",
-    vagasAdaptadas
-);
-
-// Exibe uma tabela para facilitar a conferência.
-console.table(vagasAdaptadas);
-
-
-    } catch (erro) {
-
-        // Exibe detalhes do problema no console
-        console.error(
-            "Erro na integração com Supabase:",
-            erro
-        );
-
-    }
-
-}
-
-
 
 // =========================================================
 // CONCURSOMATCH
@@ -194,13 +117,17 @@ function adaptarVagaSupabase(vaga) {
         // Mantém o identificador original do banco.
         id: vaga.id,
 
-        // Nome da instituição responsável.
-        // Ainda precisaremos classificar a categoria
-        // institucional utilizada nos filtros.
-        institution: vaga.concursos?.instituicao ?? "",
+  
+// Categoria utilizada pelo filtro de instituições.
+// Ex.: "Secretarias Estaduais".
+institution:
+    vaga.concursos?.categoria_instituicao ?? "",
 
-        // Nome exibido nos resultados.
-        agency: vaga.concursos?.instituicao ?? "",
+// Nome completo do órgão responsável.
+// Será utilizado na apresentação do resultado.
+agency:
+    vaga.concursos?.instituicao ?? "",
+
 
         // Cargo oferecido.
         role: vaga.cargo,
@@ -245,19 +172,6 @@ function adaptarVagaSupabase(vaga) {
 }
 
 
-// Executa o teste quando o site é carregado
-testarConexaoSupabase();
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -273,160 +187,6 @@ const formMessage = document.getElementById("formMessage");
 const resultsGrid = document.getElementById("resultsGrid");
 const resultsSummary = document.getElementById("resultsSummary");
 
-
-// =========================================================
-// 1. DADOS FICTÍCIOS
-// =========================================================
-//
-// Na etapa futura, este array será substituído por dados
-// carregados do banco (Supabase/PostgreSQL).
-
-const concursos = [
-    {
-        id: 1,
-        institution: "Receita Federal",
-        agency: "Receita Federal — demonstração",
-        role: "Analista Tributário de Tecnologia",
-        area: "Tecnologia da Informação",
-        region: "Sudeste",
-        governmentLevel: "Federal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 16800,
-        formationKeywords: [
-            "tecnologia",
-            "sistemas",
-            "computacao",
-            "computação",
-            "informatica",
-            "informática",
-            "analise e desenvolvimento",
-            "análise e desenvolvimento"
-        ]
-    },
-    {
-        id: 2,
-        institution: "Tribunais",
-        agency: "Tribunal Regional Modelo — demonstração",
-        role: "Analista Judiciário — Área Jurídica",
-        area: "Tribunais",
-        region: "Sul",
-        governmentLevel: "Federal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 14200,
-        formationKeywords: ["direito", "juridico", "jurídico"]
-    },
-    {
-        id: 3,
-        institution: "Universidades e Institutos Federais",
-        agency: "Universidade Federal Modelo — demonstração",
-        role: "Professor Universitário — Tecnologia",
-        area: "Educação e Professor Universitário",
-        region: "Sudeste",
-        governmentLevel: "Federal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Mestrado ou Doutorado",
-        salary: 13100,
-        formationKeywords: [
-            "tecnologia",
-            "sistemas",
-            "computacao",
-            "computação",
-            "informatica",
-            "informática"
-        ]
-    },
-    {
-        id: 4,
-        institution: "Tribunais de Contas e Controladorias",
-        agency: "Controladoria Estadual Modelo — demonstração",
-        role: "Auditor de Controle Interno",
-        area: "Controle e Auditoria",
-        region: "Sudeste",
-        governmentLevel: "Estadual",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 20500,
-        formationKeywords: ["*"]
-    },
-    {
-        id: 5,
-        institution: "INSS",
-        agency: "INSS — demonstração",
-        role: "Analista do Seguro Social",
-        area: "Previdenciária e Seguridade Social",
-        region: "Sudeste",
-        governmentLevel: "Federal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 10900,
-        formationKeywords: ["*"]
-    },
-    {
-        id: 6,
-        institution: "Bancos Públicos",
-        agency: "Banco Público Modelo — demonstração",
-        role: "Analista de Dados",
-        area: "Dados e Inteligência Artificial",
-        region: "Sul",
-        governmentLevel: "Federal",
-        employmentRegime: "CLT",
-        educationLevel: "Superior",
-        salary: 9700,
-        formationKeywords: [
-            "tecnologia",
-            "sistemas",
-            "computacao",
-            "computação",
-            "estatistica",
-            "estatística",
-            "dados",
-            "matematica",
-            "matemática"
-        ]
-    },
-    {
-        id: 7,
-        institution: "Prefeituras",
-        agency: "Prefeitura Municipal Modelo — demonstração",
-        role: "Administrador Público",
-        area: "Administrativa",
-        region: "Sudeste",
-        governmentLevel: "Municipal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 7200,
-        formationKeywords: [
-            "administracao",
-            "administração",
-            "gestao",
-            "gestão"
-        ]
-    },
-    {
-        id: 8,
-        institution: "Agências Reguladoras e Autarquias",
-        agency: "Agência Reguladora Modelo — demonstração",
-        role: "Gerente de Projetos de TI",
-        area: "Gestão e Projetos",
-        region: "Centro-Oeste",
-        governmentLevel: "Federal",
-        employmentRegime: "Estatutário",
-        educationLevel: "Superior",
-        salary: 22400,
-        formationKeywords: [
-            "tecnologia",
-            "sistemas",
-            "computacao",
-            "computação",
-            "informatica",
-            "informática",
-            "gestao",
-            "gestão"
-        ]
-    }
-];
 
 
 // =========================================================
@@ -729,7 +489,12 @@ function calculateCompatibility(profile, contest) {
     const reasons = [];
 
     // Formação recebe peso alto quando o usuário informou formação.
-    if (profile.educations.length > 0) {
+    // Para vagas do Supabase, não pontuamos
+// formação até validar os requisitos do edital.
+if (
+    profile.educations.length > 0 &&
+    !contest.fromSupabase
+) {
         possiblePoints += 35;
 
         const formationResult =
@@ -896,11 +661,12 @@ function createResultCard(result) {
 }
 
 
-function renderResults(profile) {
+// Recebe o perfil e a lista de vagas carregadas do Supabase.
+function renderResults(profile, concursosDoBanco) {
     resultsGrid.innerHTML = "";
 
     // Primeiro aplicamos os filtros ativos.
-    const filteredContests = concursos.filter(
+    const filteredContests = concursosDoBanco.filter(
         (contest) => passesActiveFilters(profile, contest)
     );
 
@@ -952,7 +718,9 @@ function renderResults(profile) {
 // 7. CAPTURA DO FORMULÁRIO
 // =========================================================
 
-profileForm.addEventListener("submit", (event) => {
+// O async permite consultar o Supabase
+// antes de apresentar os resultados.
+profileForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const formData = new FormData(profileForm);
@@ -1005,12 +773,91 @@ profileForm.addEventListener("submit", (event) => {
             .filter(Boolean)
     };
 
+
+    // ==========================================
+    // CONSULTA DAS VAGAS NO SUPABASE
+    // ==========================================
+
     console.log("Perfil capturado:", profile);
 
+    // Informa ao usuário que estamos consultando
+    // o banco de dados.
     formMessage.textContent =
-        "Perfil processado. As recomendações foram atualizadas abaixo.";
+        "Buscando vagas no Supabase...";
 
-    renderResults(profile);
+    try {
+
+        // Busca as vagas cadastradas e os dados
+        // dos concursos aos quais pertencem.
+        const { data, error } = await clienteSupabase
+            .from("vagas")
+            .select(`
+                id,
+                cargo,
+                salario,
+                estado,
+                cidade,
+                area,
+                escolaridade,
+                regime,
+                formacao_exigida,
+                concursos (
+                    nome,
+                    instituicao,
+                    categoria_instituicao,
+                    esfera
+                )
+            `);
+
+        // Se houver erro na consulta, interrompe.
+        if (error) {
+            throw error;
+        }
+
+        // Converte as vagas do Supabase para
+        // o formato utilizado pelo matching.
+        const concursosDoBanco =
+            data.map(adaptarVagaSupabase);
+
+        // Marca as vagas como originadas do banco.
+        // Os requisitos acadêmicos ainda
+        // precisarão de validação posterior.
+        concursosDoBanco.forEach((concurso) => {
+            concurso.fromSupabase = true;
+        });
+
+        // Mostra no Console o resultado da consulta.
+        console.log(
+            "Vagas carregadas do Supabase:",
+            concursosDoBanco.length
+        );
+
+        // Envia as vagas do banco para o algoritmo.
+        renderResults(profile, concursosDoBanco);
+
+        // Informa a conclusão do processamento.
+        formMessage.textContent =
+            "Consulta realizada! Veja os resultados abaixo.";
+
+    } catch (erro) {
+
+        // Se a consulta falhar, não mostramos
+        // os concursos antigos como se fossem
+        // resultados atuais do banco.
+        console.error(
+            "Erro ao consultar o Supabase:",
+            erro
+        );
+
+        formMessage.textContent =
+            "Não foi possível consultar o banco. Tente novamente.";
+
+        resultsGrid.innerHTML = "";
+
+        resultsSummary.textContent =
+            "A consulta ao Supabase falhou.";
+    }
+
 });
 
 

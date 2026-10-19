@@ -196,11 +196,18 @@
                 <div class="section-heading profile-heading">
                     <span class="eyebrow">Seu perfil</span>
                     <h2>Conte o que você procura.</h2>
-                    <p>
-                        Nesta primeira versão, os dados ficam apenas no navegador
-                        durante a demonstração. Banco de dados, autenticação e
-                        alertas serão adicionados depois.
-                    </p>
+                    
+<!-- Explicação sobre o estágio atual do projeto -->
+<p>
+    Nesta versão demonstrativa, o ConcursoMatch consulta
+    vagas cadastradas no Supabase para encontrar oportunidades
+    alinhadas às suas preferências.
+
+    O perfil informado é utilizado apenas durante a consulta.
+    O cadastro de usuários, o armazenamento dos perfis
+    e os alertas serão implementados nas próximas etapas.
+</p>
+
                 </div>
 
 
@@ -538,6 +545,28 @@
                         </div>
 
                         <div class="checkbox-grid">
+
+
+<!-- Secretarias estaduais -->
+<label class="check-card">
+    <input
+        type="checkbox"
+        name="institution[]"
+        value="Secretarias Estaduais"
+    >
+    <span>Secretarias Estaduais</span>
+</label>
+
+<!-- Institutos e autarquias municipais -->
+<label class="check-card">
+    <input
+        type="checkbox"
+        name="institution[]"
+        value="Institutos e Autarquias Municipais"
+    >
+    <span>Institutos / Autarquias Municipais</span>
+</label>
+
 
                             <label class="check-card">
                                 <input type="checkbox" name="institution[]" value="INSS">
