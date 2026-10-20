@@ -42,6 +42,169 @@
 
     <main>
 
+
+    
+<!-- ========================================== -->
+<!-- ÁREA DE AUTENTICAÇÃO - CONCURSOMATCH -->
+<!-- ========================================== -->
+
+<section class="auth-section" id="acesso">
+
+    <div class="container">
+
+        <div class="auth-card">
+
+            <h2>Minha conta ConcursoMatch</h2>
+
+            <p>
+                Crie sua conta para acompanhar
+                suas oportunidades profissionais.
+            </p>
+
+            <!-- Alternância entre cadastro e login -->
+            <div class="auth-tabs">
+
+                <button
+                    type="button"
+                    id="showRegister"
+                    class="auth-tab active"
+                >
+                    Criar conta
+                </button>
+
+                <button
+                    type="button"
+                    id="showLogin"
+                    class="auth-tab"
+                >
+                    Entrar
+                </button>
+
+            </div>
+
+            <!-- Formulário de cadastro -->
+            <form id="registerForm" class="auth-form">
+
+                <label for="registerName">Nome</label>
+
+                <input
+                    type="text"
+                    id="registerName"
+                    placeholder="Seu nome completo"
+                    autocomplete="name"
+                    required
+                >
+
+                <label for="registerEmail">E-mail</label>
+
+                <input
+                    type="email"
+                    id="registerEmail"
+                    placeholder="seuemail@exemplo.com"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="registerPassword">Senha</label>
+
+                <input
+                    type="password"
+                    id="registerPassword"
+                    placeholder="Mínimo de 8 caracteres"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Criar minha conta
+                </button>
+
+            </form>
+
+            <!-- Formulário de login -->
+            <form
+                id="loginForm"
+                class="auth-form"
+                hidden
+            >
+
+                <label for="loginEmail">E-mail</label>
+
+                <input
+                    type="email"
+                    id="loginEmail"
+                    autocomplete="email"
+                    required
+                >
+
+                <label for="loginPassword">Senha</label>
+
+                <input
+                    type="password"
+                    id="loginPassword"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="button button-primary"
+                >
+                    Entrar
+                </button>
+
+            </form>
+
+            <!-- Mensagens de autenticação -->
+            <p
+                id="authMessage"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+            <!-- Área exibida futuramente após login -->
+            <div id="userSession" hidden>
+
+                <p id="loggedUser"></p>
+
+                <button
+                    type="button"
+                    id="logoutButton"
+                    class="button button-secondary"
+                >
+                    Sair da conta
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         <!-- =========================================================
              APRESENTAÇÃO DO SERVIÇO
              ========================================================= -->
@@ -855,6 +1018,9 @@
 
 <!-- JavaScript principal do ConcursoMatch -->
 <script src="script.js"></script>
+
+<!-- Cadastro, login e logout -->
+<script src="auth.js"></script>
 
 
 </body>

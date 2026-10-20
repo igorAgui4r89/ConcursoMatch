@@ -714,6 +714,355 @@ function renderResults(profile, concursosDoBanco) {
 }
 
 
+
+/* =========================================================
+   CONCURSOMATCH
+   SALVAMENTO DO PERFIL NO SUPABASE
+   ========================================================= */
+
+async function salvarPreferenciasPerfil(profile) {
+
+    // 1. Identifica o usuário autenticado.
+    const { data, error: erroAuth } =
+        await clienteSupabase.auth.getUser();
+
+    if (erroAuth) {
+        throw erroAuth;
+    }
+
+    const usuario = data.user;
+
+    // Se não houver usuário conectado,
+    // o matching continua funcionando,
+    // mas o perfil não será salvo.
+    if (!usuario) {
+        return false;
+    }
+
+    // 2. Organiza as informações recebidas
+    // do formulário para o formato do banco.
+    const dadosPerfil = {
+
+        // Relaciona o perfil ao usuário logado.
+        usuario_id: usuario.id,
+
+        // Recupera o nome informado no cadastro.
+        nome: usuario.user_metadata?.full_name ?? null,
+
+        // Preferências salariais.
+        salario_minimo: profile.salaryRange.min,
+        salario_maximo: profile.salaryRange.max,
+
+        // Listas de preferências.
+        areas_interesse: profile.interests,
+        regioes: profile.regions,
+        instituicoes: profile.institutions,
+        esferas: profile.governmentLevels,
+        regimes: profile.employmentRegimes,
+        niveis_escolaridade: profile.educationLevels,
+        cargos_desejados: profile.targetRoles,
+
+        // Registra o momento da atualização.
+        atualizado_em: new Date().toISOString()
+    };
+
+    // 3. Insere ou atualiza o perfil.
+    const { error } = await clienteSupabase
+        .from("perfis")
+        .upsert(dadosPerfil, {
+            onConflict: "usuario_id"
+        });
+
+    // 4. Verifica se o Supabase retornou erro.
+    if (error) {
+        throw error;
+    }
+
+    
+    // ==========================================
+    // SALVAR AS FORMAÇÕES ACADÊMICAS
+    // ==========================================
+
+    // Envia ao Supabase a lista de formações
+    // que o usuário informou no formulário.
+    const { error: erroFormacoes } =
+        await clienteSupabase.rpc(
+            "sincronizar_formacoes",
+            {
+                p_cursos: profile.educations
+            }
+        );
+
+    // Interrompe se houver erro ao salvar
+    // as formações acadêmicas.
+    if (erroFormacoes) {
+        throw erroFormacoes;
+    }
+
+    // Confirma que as preferências e as
+    // formações foram salvas corretamente.
+    console.log(
+        "Perfil e formações salvos no Supabase!"
+    );
+
+    return true;
+
+}
+
+
+
+
+
+
+/* =========================================================
+   CONCURSOMATCH
+   RECUPERAÇÃO DAS PREFERÊNCIAS DO USUÁRIO
+   ========================================================= */
+
+// Restaura os valores de um grupo de checkboxes.
+function restaurarCheckboxes(nomeCampo, valores) {
+
+    // Garante que temos uma lista de valores.
+    const selecionados = valores ?? [];
+
+    // Localiza os checkboxes do grupo.
+    const campos = profileForm.querySelectorAll(
+        `input[name="${nomeCampo}"]`
+    );
+
+    // Marca as opções anteriormente salvas.
+    campos.forEach((campo) => {
+        campo.checked = selecionados.includes(campo.value);
+    });
+}
+
+
+// Limpa o formulário para evitar misturar
+// preferências de usuários diferentes.
+function limparFormularioPerfil() {
+
+    profileForm.reset();
+
+    // Mantém apenas a primeira linha de cada
+    // grupo de campos dinâmicos.
+    [educationList, targetRoleList].forEach((lista) => {
+
+        const linhas = Array.from(
+            lista.querySelectorAll("[data-dynamic-row]")
+        );
+
+        linhas.slice(1).forEach((linha) => linha.remove());
+
+        updateRemoveButtons(lista);
+    });
+
+    // Limpa resultados calculados anteriormente.
+    resultsGrid.innerHTML = "";
+
+    resultsSummary.textContent =
+        "Preencha o perfil para gerar recomendações.";
+
+    formMessage.textContent = "";
+}
+
+
+// Recupera as preferências do usuário autenticado.
+async function carregarPreferenciasPerfil() {
+
+    try {
+
+        // 1. Identifica o usuário conectado.
+        const { data: authData, error: authError } =
+            await clienteSupabase.auth.getUser();
+
+        if (authError) {
+            throw authError;
+        }
+
+        if (!authData.user) {
+            return false;
+        }
+
+        // 2. Busca somente o perfil desse usuário.
+        const { data: perfil, error } =
+            await clienteSupabase
+                .from("perfis")
+                .select("*")
+                .eq("usuario_id", authData.user.id)
+                .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        // Limpa os campos antes de restaurar os dados.
+        limparFormularioPerfil();
+
+        // O usuário pode ter conta, mas ainda não
+        // ter preenchido um perfil profissional.
+        if (!perfil) {
+            console.log("Usuário sem perfil salvo.");
+            return false;
+        }
+
+        // 3. Recupera a faixa salarial.
+        document.getElementById("salaryMin").value =
+            perfil.salario_minimo ?? "";
+
+        document.getElementById("salaryMax").value =
+            perfil.salario_maximo ?? "";
+
+        // 4. Restaura todas as opções selecionadas.
+        restaurarCheckboxes(
+            "interest[]", perfil.areas_interesse
+        );
+
+        restaurarCheckboxes(
+            "region[]", perfil.regioes
+        );
+
+        restaurarCheckboxes(
+            "institution[]", perfil.instituicoes
+        );
+
+        restaurarCheckboxes(
+            "governmentLevel[]", perfil.esferas
+        );
+
+        restaurarCheckboxes(
+            "employmentRegime[]", perfil.regimes
+        );
+
+        restaurarCheckboxes(
+            "educationLevel[]", perfil.niveis_escolaridade
+        );
+
+        // 5. Recupera os cargos desejados.
+        const cargos = perfil.cargos_desejados ?? [];
+
+        cargos.forEach((cargo, indice) => {
+
+            // A primeira linha já existe no HTML.
+            if (indice > 0) {
+
+                // Reutiliza nossa função atual para
+                // criar campos dinâmicos.
+                addDynamicRow({
+                    listElement: targetRoleList,
+                    inputName: "targetRole[]",
+                    inputIdPrefix: "target-role",
+                    labelText: "Cargo desejado",
+                    placeholder: "Ex.: Gerente de Projetos de TI"
+                });
+            }
+
+            // Preenche o campo correspondente.
+            const campos = targetRoleList.querySelectorAll(
+                'input[name="targetRole[]"]'
+            );
+
+            campos[indice].value = cargo;
+        });
+
+            
+
+        // ==========================================
+        // RECUPERAR AS FORMAÇÕES ACADÊMICAS
+        // ==========================================
+
+        // Busca as formações relacionadas ao
+        // perfil do usuário autenticado.
+        const {
+            data: formacoes,
+            error: erroFormacoes
+        } = await clienteSupabase
+            .from("formacoes")
+            .select("curso")
+            .eq("perfil_id", perfil.id)
+            .order("criado_em", {
+                ascending: true
+            });
+
+        // Verifica possíveis erros na consulta.
+        if (erroFormacoes) {
+            throw erroFormacoes;
+        }
+
+        // Recria os campos de formação na página.
+        formacoes.forEach((formacao, indice) => {
+
+            // O primeiro campo já existe no HTML.
+            // Criamos outros apenas quando necessário.
+            if (indice > 0) {
+
+                addDynamicRow({
+                    listElement: educationList,
+                    inputName: "education[]",
+                    inputIdPrefix: "education",
+                    labelText: "Formação",
+                    placeholder:
+                        "Ex.: Análise e Desenvolvimento de Sistemas"
+                });
+
+            }
+
+            // Identifica os campos existentes.
+            const campos = educationList.querySelectorAll(
+                'input[name="education[]"]'
+            );
+
+            // Preenche cada campo com o curso salvo.
+            campos[indice].value = formacao.curso;
+
+        });
+
+        // Confere os registros recuperados.
+        console.log(
+            "Formações recuperadas:",
+            formacoes
+        );
+
+
+
+
+
+
+        // 6. Confirma que a recuperação terminou.
+        formMessage.textContent =
+            "Suas preferências foram recuperadas!";
+
+        console.log(
+            "Perfil recuperado do Supabase:",
+            perfil
+        );
+
+        return true;
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao recuperar preferências:",
+            erro
+        );
+
+        formMessage.textContent =
+            "Não foi possível carregar suas preferências.";
+
+        return false;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
 // =========================================================
 // 7. CAPTURA DO FORMULÁRIO
 // =========================================================
@@ -832,12 +1181,54 @@ profileForm.addEventListener("submit", async (event) => {
             concursosDoBanco.length
         );
 
-        // Envia as vagas do banco para o algoritmo.
-        renderResults(profile, concursosDoBanco);
 
-        // Informa a conclusão do processamento.
+// ==========================================
+// MATCHING E SALVAMENTO DAS PREFERÊNCIAS
+// ==========================================
+
+// Primeiro, apresenta normalmente os resultados
+// do algoritmo de matching.
+renderResults(profile, concursosDoBanco);
+
+// Depois, tenta salvar as preferências do usuário.
+// Um erro no salvamento não deve impedir
+// a visualização dos concursos encontrados.
+
+try {
+
+    const perfilSalvo =
+        await salvarPreferenciasPerfil(profile);
+
+    if (perfilSalvo) {
+
         formMessage.textContent =
-            "Consulta realizada! Veja os resultados abaixo.";
+            "Recomendações atualizadas! " +
+            "Suas preferências foram salvas.";
+
+    } else {
+
+        formMessage.textContent =
+            "Recomendações atualizadas! " +
+            "Entre na sua conta para salvar " +
+            "suas preferências.";
+
+    }
+
+} catch (erroSalvamento) {
+
+    // Mantém os resultados exibidos,
+    // mesmo quando o salvamento falhar.
+    console.error(
+        "Erro ao salvar preferências:",
+        erroSalvamento
+    );
+
+    formMessage.textContent =
+        "Recomendações atualizadas, mas não " +
+        "foi possível salvar suas preferências.";
+
+}
+
 
     } catch (erro) {
 
