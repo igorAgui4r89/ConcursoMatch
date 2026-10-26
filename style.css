@@ -1613,3 +1613,72 @@ select:focus {
     }
 }
 
+
+/* ==========================================
+   ETAPA 14 - BOTÕES DO PERFIL
+   ========================================== */
+
+/* Organiza os dois botões lado a lado. */
+.profile-action-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+/* Mantém os botões com dimensões semelhantes. */
+.profile-action-buttons .button {
+    min-width: 180px;
+    text-align: center;
+}
+
+/* Em telas pequenas, empilha os botões. */
+@media (max-width: 600px) {
+
+    .profile-action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .profile-action-buttons .button {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================
+   ETAPA 14.3 - NÍVEL DAS FORMAÇÕES
+   ========================================== */
+
+/* Permite acomodar o campo de formação,
+   o nível acadêmico e o botão Remover. */
+#educationList .dynamic-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+/* Define uma largura confortável para
+   a seleção do nível acadêmico. */
+.education-level-field {
+    flex: 0 1 230px;
+    min-width: 180px;
+}
+
+/* Em celulares, os campos ficam empilhados. */
+@media (max-width: 600px) {
+
+    #educationList .dynamic-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .education-level-field {
+        width: 100%;
+        flex: auto;
+    }
+}
+
+

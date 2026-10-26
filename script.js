@@ -243,8 +243,79 @@ function addDynamicRow({
         `Remover ${labelText.toLowerCase()}`
     );
 
-    field.append(label, input);
+
+// Adiciona o campo de texto à nova linha.
+field.append(label, input);
+
+// ==========================================
+// NÍVEL ACADÊMICO DAS FORMAÇÕES
+// ==========================================
+
+// Verifica se estamos criando uma linha de formação.
+// A função também é utilizada para cargos desejados,
+// portanto não devemos adicionar níveis nesses campos.
+if (listElement === educationList) {
+
+    // Cria o contêiner do novo seletor.
+    const levelField = document.createElement("div");
+
+    levelField.className =
+        "field education-level-field";
+
+    // Cria o rótulo do seletor.
+    const levelLabel = document.createElement("label");
+
+    levelLabel.textContent = "Nível da formação";
+
+    levelLabel.setAttribute(
+        "for",
+        `education-level-${rowCount}`
+    );
+
+    // Cria o elemento SELECT.
+    const levelSelect = document.createElement("select");
+
+    levelSelect.id = `education-level-${rowCount}`;
+    levelSelect.name = "educationDegree[]";
+
+    // Define as opções disponíveis.
+    const niveis = [
+        ["Não informado", "Selecione o nível"],
+        ["Técnico", "Técnico"],
+        ["Tecnólogo", "Tecnólogo"],
+        ["Bacharelado", "Bacharelado"],
+        ["Licenciatura", "Licenciatura"],
+        ["Especialização", "Especialização"],
+        ["Mestrado", "Mestrado"],
+        ["Doutorado", "Doutorado"],
+        ["Outro", "Outro"]
+    ];
+
+    // Transforma cada opção em um elemento OPTION.
+    niveis.forEach(([valor, descricao]) => {
+
+        const option = document.createElement("option");
+
+        option.value = valor;
+        option.textContent = descricao;
+
+        levelSelect.appendChild(option);
+    });
+
+    // Acrescenta o seletor à nova linha.
+    levelField.append(levelLabel, levelSelect);
+
+    // Monta a linha com formação, nível e remoção.
+    row.append(field, levelField, removeButton);
+
+} else {
+
+    // Para cargos desejados, preserva
+    // exatamente o comportamento anterior.
     row.append(field, removeButton);
+
+}
+
     listElement.appendChild(row);
 
     updateRemoveButtons(listElement);
@@ -778,20 +849,22 @@ async function salvarPreferenciasPerfil(profile) {
         throw error;
     }
 
-    
-    // ==========================================
-    // SALVAR AS FORMAÇÕES ACADÊMICAS
-    // ==========================================
 
-    // Envia ao Supabase a lista de formações
-    // que o usuário informou no formulário.
-    const { error: erroFormacoes } =
-        await clienteSupabase.rpc(
-            "sincronizar_formacoes",
-            {
-                p_cursos: profile.educations
-            }
-        );
+
+// ==========================================
+// SALVAR CURSOS E NÍVEIS ACADÊMICOS
+// ==========================================
+
+// Executa a nova função SQL do Supabase,
+// enviando cada curso com seu respectivo nível.
+const { error: erroFormacoes } =
+    await clienteSupabase.rpc(
+        "sincronizar_formacoes_com_niveis",
+        {
+            p_formacoes: profile.educationDetails
+        }
+    );
+
 
     // Interrompe se houver erro ao salvar
     // as formações acadêmicas.
@@ -977,7 +1050,7 @@ async function carregarPreferenciasPerfil() {
             error: erroFormacoes
         } = await clienteSupabase
             .from("formacoes")
-            .select("curso")
+            .select("curso, nivel")
             .eq("perfil_id", perfil.id)
             .order("criado_em", {
                 ascending: true
@@ -1013,6 +1086,28 @@ async function carregarPreferenciasPerfil() {
 
             // Preenche cada campo com o curso salvo.
             campos[indice].value = formacao.curso;
+
+// ==========================================
+// RESTAURAR O NÍVEL ACADÊMICO
+// ==========================================
+
+// Identifica a linha correspondente ao curso.
+const linhas = educationList.querySelectorAll(
+    "[data-dynamic-row]"
+);
+
+const linhaAtual = linhas[indice];
+
+// Localiza o seletor de nível dessa formação.
+const seletorNivel = linhaAtual.querySelector(
+    'select[name="educationDegree[]"]'
+);
+
+// Restaura o nível anteriormente salvo.
+// Formações antigas continuam com "Não informado".
+seletorNivel.value =
+    formacao.nivel ?? "Não informado";
+
 
         });
 
@@ -1098,13 +1193,45 @@ profileForm.addEventListener("submit", async (event) => {
         return;
     }
 
-    const profile = {
-        educations: formData
-            .getAll("education[]")
-            .map((value) => value.trim())
-            .filter(Boolean),
+    
+const profile = {
 
-        interests: formData.getAll("interest[]"),
+    // Lista simples de formações, utilizada
+    // pelo algoritmo de matching.
+    educations: formData
+        .getAll("education[]")
+        .map((value) => value.trim())
+        .filter(Boolean),
+
+    // Lista completa de formações e níveis,
+    // utilizada para salvar no Supabase.
+    educationDetails: Array.from(
+        educationList.querySelectorAll("[data-dynamic-row]")
+    )
+        .map((linha) => {
+
+            // Recupera o curso e seu nível
+            // na mesma linha do formulário.
+            const campoCurso = linha.querySelector(
+                'input[name="education[]"]'
+            );
+
+            const campoNivel = linha.querySelector(
+                'select[name="educationDegree[]"]'
+            );
+
+            return {
+                curso: campoCurso.value.trim(),
+                nivel: campoNivel.value
+            };
+
+        })
+        // Ignora formações sem nome.
+        .filter((formacao) => formacao.curso !== ""),
+
+    // Mantém as demais preferências.
+    interests: formData.getAll("interest[]"),
+
         regions: formData.getAll("region[]"),
         institutions: formData.getAll("institution[]"),
         governmentLevels: formData.getAll("governmentLevel[]"),
@@ -1121,6 +1248,75 @@ profileForm.addEventListener("submit", async (event) => {
             .map((value) => value.trim())
             .filter(Boolean)
     };
+
+
+
+// ==========================================
+// IDENTIFICA QUAL BOTÃO FOI CLICADO
+// ==========================================
+
+// event.submitter identifica o botão responsável
+// pelo envio do formulário.
+const apenasSalvar =
+    event.submitter?.id === "saveProfileButton";
+
+
+// Se o usuário clicou em "Salvar meu perfil",
+// executamos somente o salvamento.
+if (apenasSalvar) {
+
+    formMessage.textContent =
+        "Salvando seu perfil...";
+
+    try {
+
+        // Reutiliza a função que já criamos.
+        // Ela salva as preferências e também
+        // sincroniza as formações acadêmicas.
+        const perfilSalvo =
+            await salvarPreferenciasPerfil(profile);
+
+        if (perfilSalvo) {
+
+            formMessage.textContent =
+                "Seu perfil foi salvo com sucesso!";
+
+        } else {
+
+            // O Supabase só permite salvar um
+            // perfil vinculado a uma conta.
+            formMessage.textContent =
+                "Entre na sua conta para salvar o perfil.";
+
+        }
+
+    } catch (erro) {
+
+        // Exibe o erro no console para facilitar
+        // nossa identificação de problemas.
+        console.error(
+            "Erro ao salvar perfil:",
+            erro
+        );
+
+        formMessage.textContent =
+            "Não foi possível salvar seu perfil. " +
+            "Tente novamente.";
+
+    }
+
+    // Muito importante:
+    // interrompe a execução aqui.
+    // Assim, não consultamos as vagas nem
+    // executamos o algoritmo de matching.
+    return;
+}
+
+
+
+
+
+
 
 
     // ==========================================
@@ -1182,52 +1378,23 @@ profileForm.addEventListener("submit", async (event) => {
         );
 
 
+
 // ==========================================
-// MATCHING E SALVAMENTO DAS PREFERÊNCIAS
+// EXECUÇÃO DO MATCHING
 // ==========================================
 
-// Primeiro, apresenta normalmente os resultados
-// do algoritmo de matching.
+// Os dados do formulário já foram capturados
+// e validados anteriormente.
+
+// Apresenta os concursos compatíveis com
+// as preferências informadas.
 renderResults(profile, concursosDoBanco);
 
-// Depois, tenta salvar as preferências do usuário.
-// Um erro no salvamento não deve impedir
-// a visualização dos concursos encontrados.
+// Informa que a busca foi concluída.
+// Nenhuma alteração é salva no perfil.
+formMessage.textContent =
+    "Consulta realizada! Veja os resultados abaixo.";
 
-try {
-
-    const perfilSalvo =
-        await salvarPreferenciasPerfil(profile);
-
-    if (perfilSalvo) {
-
-        formMessage.textContent =
-            "Recomendações atualizadas! " +
-            "Suas preferências foram salvas.";
-
-    } else {
-
-        formMessage.textContent =
-            "Recomendações atualizadas! " +
-            "Entre na sua conta para salvar " +
-            "suas preferências.";
-
-    }
-
-} catch (erroSalvamento) {
-
-    // Mantém os resultados exibidos,
-    // mesmo quando o salvamento falhar.
-    console.error(
-        "Erro ao salvar preferências:",
-        erroSalvamento
-    );
-
-    formMessage.textContent =
-        "Recomendações atualizadas, mas não " +
-        "foi possível salvar suas preferências.";
-
-}
 
 
     } catch (erro) {
