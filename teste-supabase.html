@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Teste Supabase - ConcursoMatch</title>
+
+    <style>
+        /* Aparência simples para visualizar o teste */
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #243447;
+        }
+
+        #status {
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .vaga {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .vaga h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>ConcursoMatch - Teste do Supabase</h1>
+
+    <p id="status">Conectando ao banco de dados...</p>
+
+    <!-- Aqui aparecerão as vagas do Supabase -->
+    <div id="lista-vagas"></div>
+
+
+    <!-- Biblioteca JavaScript oficial do Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+
+        // ==========================================
+        // 1. CONFIGURAÇÃO DO SUPABASE
+        // ==========================================
+
+        // Endereço do nosso projeto
+        const SUPABASE_URL =
+            "https://ohoxtfmnkaihzmzcfjlp.supabase.co";
+
+        // Chave pública do Supabase
+        const SUPABASE_KEY =
+            "sb_publishable_sndA8M3INb4AxiVsfiW1BA_Zkt2iTS1";
+
+        // Cria o cliente de conexão
+        const clienteSupabase = supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_KEY
+        );
+
+
+        // ==========================================
+        // 2. FUNÇÃO PARA CARREGAR AS VAGAS
+        // ==========================================
+
+        async function carregarVagas() {
+
+            // Seleciona os elementos da página
+            const status = document.getElementById("status");
+
+            const lista = document.getElementById("lista-vagas");
+
+            try {
+
+                // Consulta a tabela vagas e busca
+                // informações da tabela concursos
+                const { data, error } = await clienteSupabase
+                    .from("vagas")
+                    .select(`
+                        cargo,
+                        salario,
+                        estado,
+                        cidade,
+                        concursos (
+                            nome,
+                            instituicao
+                        )
+                    `);
+
+                // Verifica se ocorreu algum erro
+                if (error) {
+                    throw error;
+                }
+
+                // Limpa os resultados anteriores
+                lista.innerHTML = "";
+
+                // Percorre todas as vagas encontradas
+                data.forEach(vaga => {
+
+                    // Cria um cartão para cada vaga
+                    const div = document.createElement("div");
+
+                    div.className = "vaga";
+
+                    // Formata o salário em reais
+                    const salarioFormatado = Number(
+                        vaga.salario
+                    ).toLocaleString("pt-BR", {
+                        style: "currency",
+                        currency: "BRL"
+                    });
+
+                    // Cria os elementos do cartão
+                    const titulo = document.createElement("h3");
+                    titulo.textContent = vaga.cargo;
+
+                    const concurso = document.createElement("p");
+                    concurso.textContent =
+                        "Concurso: " +
+                        (vaga.concursos?.nome ?? "Não informado");
+
+                    const instituicao = document.createElement("p");
+                    instituicao.textContent =
+                        "Instituição: " +
+                        (vaga.concursos?.instituicao ?? "Não informada");
+
+                    const salario = document.createElement("p");
+                    salario.textContent =
+                        "Salário: " + salarioFormatado;
+
+                    const local = document.createElement("p");
+                    local.textContent =
+                        "Local: " + vaga.cidade +
+                        " / " + vaga.estado;
+
+                    // Adiciona os elementos ao cartão
+                    div.append(
+                        titulo,
+                        concurso,
+                        instituicao,
+                        salario,
+                        local
+                    );
+
+                    // Adiciona o cartão à página
+                    lista.appendChild(div);
+
+                });
+
+                // Atualiza a mensagem de sucesso
+                status.textContent =
+                    "Conexão realizada com sucesso! " +
+                    data.length + " vagas encontradas.";
+
+                status.style.color = "green";
+
+                // Mostra os dados no console
+                console.log("Dados recebidos:", data);
+
+            } catch (erro) {
+
+                // Exibe uma mensagem em caso de erro
+                status.textContent =
+                    "Erro ao conectar com o Supabase.";
+
+                status.style.color = "red";
+
+                console.error("Erro:", erro);
+            }
+
+        }
+
+
+        // ==========================================
+        // 3. INICIAR A CONSULTA
+        // ==========================================
+
+        // Executa a função ao carregar a página
+        carregarVagas();
+
+    </script>
+
+</body>
+</html>

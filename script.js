@@ -669,6 +669,48 @@ if (
 }
 
 
+
+/* ==========================================
+   ETAPA 15.1 - PROTEÇÃO CONTRA HTML INDEVIDO
+   ========================================== */
+
+// Converte caracteres especiais em entidades HTML.
+// Assim, textos provenientes do banco não são
+// interpretados como elementos HTML pelo navegador.
+
+function escapeHtml(value) {
+
+    return String(value ?? "").replace(
+        /[&<>"']/g,
+        (caractere) => {
+
+            const entidades = {
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            };
+
+            return entidades[caractere];
+        }
+    );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // =========================================================
 // 6. RENDERIZAÇÃO DOS RESULTADOS
 // =========================================================
@@ -681,14 +723,14 @@ function createResultCard(result) {
 
     const reasonsHtml = reasons
         .slice(0, 5)
-        .map((reason) => `<li>${reason}</li>`)
+        .map((reason) => `<li>${escapeHtml(reason)}</li>`)
         .join("");
 
     card.innerHTML = `
         <div class="result-card-top">
             <div class="result-card-title">
-                <span>${contest.agency}</span>
-                <h3>${contest.role}</h3>
+                <span>${escapeHtml(contest.agency)}</span>
+                <h3>${escapeHtml(contest.role)}</h3>
             </div>
 
             <div class="score-badge" aria-label="${score}% de compatibilidade">
@@ -700,7 +742,7 @@ function createResultCard(result) {
         <div class="result-meta">
             <div class="result-meta-item">
                 <span>Área</span>
-                <strong>${contest.area}</strong>
+                <strong>${escapeHtml(contest.area)}</strong>
             </div>
 
             <div class="result-meta-item">
@@ -710,12 +752,12 @@ function createResultCard(result) {
 
             <div class="result-meta-item">
                 <span>Região</span>
-                <strong>${contest.region}</strong>
+                <strong>${escapeHtml(contest.region)}</strong>
             </div>
 
             <div class="result-meta-item">
                 <span>Esfera / Regime</span>
-                <strong>${contest.governmentLevel} • ${contest.employmentRegime}</strong>
+                <strong>	${escapeHtml(contest.governmentLevel)} • ${escapeHtml(contest.employmentRegime)}</strong>
             </div>
         </div>
 
@@ -786,9 +828,10 @@ function renderResults(profile, concursosDoBanco) {
 
 
 
+
 /* =========================================================
    CONCURSOMATCH
-   SALVAMENTO DO PERFIL NO SUPABASE
+   SALVAMENTO COMPLETO DO PERFIL - ETAPA 15.3.2
    ========================================================= */
 
 async function salvarPreferenciasPerfil(profile) {
@@ -797,57 +840,59 @@ async function salvarPreferenciasPerfil(profile) {
     const { data, error: erroAuth } =
         await clienteSupabase.auth.getUser();
 
+    // Verifica possíveis erros de autenticação.
     if (erroAuth) {
         throw erroAuth;
     }
 
     const usuario = data.user;
 
-    // Se não houver usuário conectado,
-    // o matching continua funcionando,
-    // mas o perfil não será salvo.
+    // Sem uma conta autenticada,
+    // não podemos salvar um perfil individual.
     if (!usuario) {
         return false;
     }
 
-    // 2. Organiza as informações recebidas
-    // do formulário para o formato do banco.
-    const dadosPerfil = {
+    // 2. Verifica se a lista completa de formações
+    // foi capturada corretamente pelo formulário.
+    if (!Array.isArray(profile.educationDetails)) {
 
-        // Relaciona o perfil ao usuário logado.
-        usuario_id: usuario.id,
-
-        // Recupera o nome informado no cadastro.
-        nome: usuario.user_metadata?.full_name ?? null,
-
-        // Preferências salariais.
-        salario_minimo: profile.salaryRange.min,
-        salario_maximo: profile.salaryRange.max,
-
-        // Listas de preferências.
-        areas_interesse: profile.interests,
-        regioes: profile.regions,
-        instituicoes: profile.institutions,
-        esferas: profile.governmentLevels,
-        regimes: profile.employmentRegimes,
-        niveis_escolaridade: profile.educationLevels,
-        cargos_desejados: profile.targetRoles,
-
-        // Registra o momento da atualização.
-        atualizado_em: new Date().toISOString()
-    };
-
-    // 3. Insere ou atualiza o perfil.
-    const { error } = await clienteSupabase
-        .from("perfis")
-        .upsert(dadosPerfil, {
-            onConflict: "usuario_id"
-        });
-
-    // 4. Verifica se o Supabase retornou erro.
-    if (error) {
-        throw error;
+        throw new Error(
+            "Os dados das formações estão incompletos."
+        );
     }
+
+    // 3. Recupera o nome do usuário cadastrado.
+    const nomeUsuario =
+        usuario.user_metadata?.full_name ||
+        usuario.email?.split("@")[0] ||
+        "Usuário";
+
+    // 4. Envia todo o perfil em uma única operação
+    // para a função PostgreSQL criada no Supabase.
+    const { data: perfilId, error: erroSalvamento } =
+        await clienteSupabase.rpc(
+            "salvar_perfil_completo",
+            {
+                p_nome: nomeUsuario,
+                p_perfil: profile
+            }
+        );
+
+    // 5. Se qualquer parte da operação falhar,
+    // o PostgreSQL reverterá a transação.
+    if (erroSalvamento) {
+        throw erroSalvamento;
+    }
+
+    // 6. Confirma o salvamento completo.
+    console.log(
+        "Perfil completo salvo com sucesso!",
+        perfilId
+    );
+
+    return true;
+}
 
 
 
@@ -1193,7 +1238,98 @@ profileForm.addEventListener("submit", async (event) => {
         return;
     }
 
-    
+ 
+/* ==========================================
+   ETAPA 15.3 - VALIDAÇÃO DAS FORMAÇÕES
+   ========================================== */
+
+// Recupera todas as linhas de formação.
+const linhasFormacao = educationList.querySelectorAll(
+    "[data-dynamic-row]"
+);
+
+// Armazena as formações já encontradas
+// para identificar possíveis duplicações.
+const formacoesEncontradas = new Set();
+
+// Analisa cada formação individualmente.
+for (const linha of linhasFormacao) {
+
+    // Recupera o nome do curso.
+    const campoCurso = linha.querySelector(
+        'input[name="education[]"]'
+    );
+
+    // Recupera o nível acadêmico.
+    const campoNivel = linha.querySelector(
+        'select[name="educationDegree[]"]'
+    );
+
+    const curso = campoCurso.value.trim();
+    const nivel = campoNivel.value;
+
+    // CASO 1:
+    // Nível selecionado, mas sem nome do curso.
+    if (!curso && nivel !== "Não informado") {
+
+        formMessage.textContent =
+            "Informe o nome do curso correspondente " +
+            "ao nível acadêmico selecionado.";
+
+        campoCurso.focus();
+        return;
+    }
+
+    // CASO 2:
+    // Linha completamente vazia.
+    // Como a formação é opcional, ignoramos.
+    if (!curso && nivel === "Não informado") {
+        continue;
+    }
+
+    // CASO 3:
+    // Curso informado, mas nível não selecionado.
+    if (curso && nivel === "Não informado") {
+
+        formMessage.textContent =
+            "Selecione o nível acadêmico da formação: " +
+            curso + ".";
+
+        campoNivel.focus();
+        return;
+    }
+
+    // CASO 4:
+    // Verifica formações repetidas.
+    // Permite o mesmo nome de curso em níveis
+    // diferentes, mas não a mesma combinação.
+    const identificador =
+        `${normalizeText(curso)}|${normalizeText(nivel)}`;
+
+    if (formacoesEncontradas.has(identificador)) {
+
+        formMessage.textContent =
+            "A formação " + curso + " (" + nivel +
+            ") foi cadastrada mais de uma vez.";
+
+        campoCurso.focus();
+        return;
+    }
+
+    // Registra essa combinação para comparar
+    // com as próximas formações.
+    formacoesEncontradas.add(identificador);
+}
+   
+
+
+
+
+
+
+
+
+
 const profile = {
 
     // Lista simples de formações, utilizada
