@@ -896,38 +896,6 @@ async function salvarPreferenciasPerfil(profile) {
 
 
 
-// ==========================================
-// SALVAR CURSOS E NÍVEIS ACADÊMICOS
-// ==========================================
-
-// Executa a nova função SQL do Supabase,
-// enviando cada curso com seu respectivo nível.
-const { error: erroFormacoes } =
-    await clienteSupabase.rpc(
-        "sincronizar_formacoes_com_niveis",
-        {
-            p_formacoes: profile.educationDetails
-        }
-    );
-
-
-    // Interrompe se houver erro ao salvar
-    // as formações acadêmicas.
-    if (erroFormacoes) {
-        throw erroFormacoes;
-    }
-
-    // Confirma que as preferências e as
-    // formações foram salvas corretamente.
-    console.log(
-        "Perfil e formações salvos no Supabase!"
-    );
-
-    return true;
-
-}
-
-
 
 
 
