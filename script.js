@@ -895,11 +895,6 @@ async function salvarPreferenciasPerfil(profile) {
 }
 
 
-
-
-
-
-
 /* =========================================================
    CONCURSOMATCH
    RECUPERAÇÃO DAS PREFERÊNCIAS DO USUÁRIO
