@@ -1682,3 +1682,118 @@ select:focus {
 }
 
 
+/* ==============================================
+   ETAPA 15.4.1 - MELHORIAS NA VERSÃO MOBILE
+   ============================================== */
+
+@media (max-width: 680px) {
+
+    /* 1. Botão Remover menor e alinhado à direita */
+    .dynamic-row .remove-button {
+        width: auto;
+        min-width: 110px;
+        min-height: 44px;
+        padding: 9px 16px;
+        align-self: flex-end;
+    }
+
+    /* 2. Rolagem interna nas listas extensas */
+    .checkbox-scroll {
+        max-height: 330px;
+        overflow-y: auto;
+        overflow-x: hidden;
+
+        /* Mantém os itens organizados no topo */
+        align-content: start;
+
+        /* Evita que a barra encoste nas opções */
+        padding-right: 6px;
+
+        /* Suaviza a rolagem em dispositivos móveis */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+}
+
+
+/* ==========================================
+   ETAPA 15.4.2 - OPÇÕES SELECIONADAS
+   ========================================== */
+
+/* Destaca o cartão quando o checkbox
+   dentro dele estiver selecionado. */
+.check-card:has(input[type="checkbox"]:checked) {
+    background: #dceefb;
+    border-color: #1671b3;
+}
+
+/* Melhora a identificação pelo teclado. */
+.check-card:focus-within {
+    outline: 2px solid #1671b3;
+    outline-offset: 2px;
+}
+
+
+/* ==========================================
+   ETAPA 15.4.2 - DESTAQUE DAS SELEÇÕES
+   ========================================== */
+
+/* Destaca o cartão de uma opção selecionada. */
+.check-card:has(input[type="checkbox"]:checked) {
+    background: #dceefb;
+    border-color: #1671b3;
+}
+
+/* Mantém o destaque visível ao usar Tab. */
+.check-card:focus-within {
+    outline: 2px solid #1671b3;
+    outline-offset: 2px;
+}
+
+/* Suaviza a mudança de cor e borda. */
+.check-card {
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+/* ==========================================
+   ETAPA 15.4.3 - FEEDBACK DO FORMULÁRIO
+   ========================================== */
+
+/* Aparência padrão das mensagens. */
+.form-message[data-status] {
+    padding: 12px 16px;
+    margin-top: 12px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+}
+
+/* Mensagem durante o salvamento. */
+.form-message[data-status="loading"] {
+    background: #eaf4ff;
+    border-color: #bdd9f0;
+    color: #155b91;
+}
+
+/* Confirmação de sucesso. */
+.form-message[data-status="success"] {
+    background: #edf8f1;
+    border-color: #b6dec7;
+    color: #246b47;
+}
+
+/* Mensagem de erro. */
+.form-message[data-status="error"] {
+    background: #fff0f0;
+    border-color: #ebc3c3;
+    color: #a13c3c;
+}
+
+/* Indica que o botão está temporariamente bloqueado. */
+#saveProfileButton:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+

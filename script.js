@@ -1360,56 +1360,69 @@ const apenasSalvar =
     event.submitter?.id === "saveProfileButton";
 
 
-// Se o usuário clicou em "Salvar meu perfil",
-// executamos somente o salvamento.
+
 if (apenasSalvar) {
 
+    // Identifica o botão responsável pelo salvamento.
+    const botaoSalvar =
+        document.getElementById("saveProfileButton");
+
+    // Evita iniciar outro salvamento simultâneo.
+    if (botaoSalvar.disabled) {
+        return;
+    }
+
+    // Bloqueia novos cliques enquanto a operação ocorre.
+    botaoSalvar.disabled = true;
+    botaoSalvar.textContent = "Salvando...";
+
+    // Exibe uma mensagem de carregamento.
+    formMessage.dataset.status = "loading";
     formMessage.textContent =
-        "Salvando seu perfil...";
+        "Aguarde, estamos salvando suas preferências.";
 
     try {
 
-        // Reutiliza a função que já criamos.
-        // Ela salva as preferências e também
-        // sincroniza as formações acadêmicas.
+        // Executa o salvamento completo no Supabase.
         const perfilSalvo =
             await salvarPreferenciasPerfil(profile);
 
         if (perfilSalvo) {
 
+            // Exibe a confirmação de sucesso.
+            formMessage.dataset.status = "success";
             formMessage.textContent =
-                "Seu perfil foi salvo com sucesso!";
+                "✓ Seu perfil foi salvo com sucesso!";
 
         } else {
 
-            // O Supabase só permite salvar um
-            // perfil vinculado a uma conta.
+            // Informa quando não existe sessão autenticada.
+            formMessage.dataset.status = "error";
             formMessage.textContent =
                 "Entre na sua conta para salvar o perfil.";
-
         }
 
     } catch (erro) {
 
-        // Exibe o erro no console para facilitar
-        // nossa identificação de problemas.
-        console.error(
-            "Erro ao salvar perfil:",
-            erro
-        );
+        // Registra o erro para facilitar a depuração.
+        console.error("Erro ao salvar perfil:", erro);
 
+        // Apresenta uma mensagem amigável.
+        formMessage.dataset.status = "error";
         formMessage.textContent =
-            "Não foi possível salvar seu perfil. " +
-            "Tente novamente.";
+            "Não foi possível salvar seu perfil. Tente novamente.";
 
+    } finally {
+
+        // Restaura o botão, mesmo se ocorrer algum erro.
+        botaoSalvar.disabled = false;
+        botaoSalvar.textContent = "Salvar meu perfil";
     }
 
-    // Muito importante:
-    // interrompe a execução aqui.
-    // Assim, não consultamos as vagas nem
-    // executamos o algoritmo de matching.
+    // Impede que o botão Salvar execute o matching.
     return;
 }
+
 
 
 
