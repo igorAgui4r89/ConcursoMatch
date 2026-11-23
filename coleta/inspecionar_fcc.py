@@ -5,6 +5,7 @@
 # ==========================================
 
 import json
+import sys
 
 from pathlib import Path
 from urllib.request import Request, urlopen
@@ -73,8 +74,22 @@ dados = json.loads(
     )
 )
 
-# Seleciona o primeiro concurso para teste.
-url = dados["links"][0]
+
+# ==========================================
+# ETAPA 16.8 - ESCOLHER QUAL CONCURSO ANALISAR
+# ==========================================
+
+# Lê o número informado no terminal.
+# Se nenhum número for informado, utiliza o primeiro.
+indice = int(sys.argv[1]) if len(sys.argv) > 1 else 0
+
+# Impede selecionar um concurso inexistente.
+if indice < 0 or indice >= len(dados["links"]):
+    raise SystemExit("Índice de concurso inválido.")
+
+# Seleciona a página correspondente.
+url = dados["links"][indice]
+
 
 print("Inspecionando:", url)
 

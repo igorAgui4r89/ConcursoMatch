@@ -1,0 +1,35 @@
+{
+    "concurso": "Banestes 2026",
+    "banca": "FCC",
+    "edital": "01/2026 - Retificado",
+    "fonte": "https://www.concursosfcc.com.br/concursos/banes126/index.html",
+    "vagas": [
+        {
+            "cargo": "Técnico Bancário",
+            "area": "Bancária e Financeira",
+            "salario": "4552.43",
+            "jornada_semanal": 30,
+            "escolaridade": "Ensino médio completo",
+            "formacao_especifica": false,
+            "requisitos_adicionais": [],
+            "tipo_vaga": "Cadastro de reserva",
+            "status_validacao": "Pendente de revisão"
+        },
+        {
+            "cargo": "Técnico em Segurança do Trabalho",
+            "area": "Segurança do Trabalho",
+            "salario": "5618.71",
+            "jornada_semanal": 40,
+            "escolaridade": "Ensino médio completo",
+            "formacao_especifica": true,
+            "requisitos_adicionais": [
+                "Formação específica em Segurança do Trabalho",
+                "Certificado registrado no Ministério do Trabalho e Emprego",
+                "CNH categoria B",
+                "Disponibilidade para viagens"
+            ],
+            "tipo_vaga": "Cadastro de reserva",
+            "status_validacao": "Pendente de revisão"
+        }
+    ]
+}

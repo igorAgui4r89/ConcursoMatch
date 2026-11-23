@@ -1,0 +1,57 @@
+{
+    "origem": "edital_banestes.txt",
+    "registros": [
+        {
+            "cargo": "Técnico Bancário",
+            "requisitos_detectados": {
+                "ensino_medio": true,
+                "formacao_especifica": false,
+                "registro_profissional": false,
+                "cnh_categoria_b": false
+            },
+            "evidencias": [
+                {
+                    "linha": 39,
+                    "texto": "Certificado de conclusão ou diploma de curso de Ensino Médio, devidamente registrado,"
+                },
+                {
+                    "linha": 40,
+                    "texto": "expedido por Instituição de Ensino reconhecida pelo Ministério da Educação."
+                }
+            ],
+            "status_validacao": "pendente"
+        },
+        {
+            "cargo": "Técnico em Segurança do Trabalho",
+            "requisitos_detectados": {
+                "ensino_medio": true,
+                "formacao_especifica": true,
+                "registro_profissional": true,
+                "cnh_categoria_b": true
+            },
+            "evidencias": [
+                {
+                    "linha": 51,
+                    "texto": "Certificado de conclusão do ensino médio, com curso de especialização em Segurança do"
+                },
+                {
+                    "linha": 52,
+                    "texto": "Trabalho ou curso Técnico em Segurança do Trabalho, expedidos por Instituição de Ensino"
+                },
+                {
+                    "linha": 54,
+                    "texto": "reconhecida pelo Ministério da Educação e certificado registrado no Ministério do Trabalho e"
+                },
+                {
+                    "linha": 55,
+                    "texto": "Emprego, posse de Carteira Nacional de Habilitação (CNH) – Categoria B e disponibilidade para"
+                },
+                {
+                    "linha": 57,
+                    "texto": "viagens."
+                }
+            ],
+            "status_validacao": "pendente"
+        }
+    ]
+}

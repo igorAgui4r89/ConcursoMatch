@@ -1,0 +1,77 @@
+{
+    "origem": "edital_banestes.txt",
+    "registros": [
+        {
+            "cargo": "Técnico Bancário",
+            "salario_original": "R$ 4.552,43",
+            "jornada": "30h",
+            "linha_cargo": 43,
+            "contexto_requisitos": [
+                {
+                    "linha": 39,
+                    "texto": "Certificado de conclusão ou diploma de curso de Ensino Médio, devidamente registrado,              Valor da Taxa de"
+                },
+                {
+                    "linha": 40,
+                    "texto": "expedido por Instituição de Ensino reconhecida pelo Ministério da Educação.                       inscrição: R$ 67,00"
+                },
+                {
+                    "linha": 41,
+                    "texto": "Cargo                            Remuneração            Carga Horária          Vagas"
+                },
+                {
+                    "linha": 42,
+                    "texto": "Cadastro de Reserva"
+                }
+            ],
+            "elegibilidade": "nao_avaliada",
+            "status_validacao": "pendente"
+        },
+        {
+            "cargo": "Técnico em Segurança do Trabalho",
+            "salario_original": "R$ 5.618,71",
+            "jornada": "40h",
+            "linha_cargo": 60,
+            "contexto_requisitos": [
+                {
+                    "linha": 51,
+                    "texto": "Certificado de conclusão do ensino médio, com curso de especialização em Segurança do"
+                },
+                {
+                    "linha": 52,
+                    "texto": "Trabalho ou curso Técnico em Segurança do Trabalho, expedidos por Instituição de Ensino"
+                },
+                {
+                    "linha": 53,
+                    "texto": "Valor da Taxa de"
+                },
+                {
+                    "linha": 54,
+                    "texto": "reconhecida pelo Ministério da Educação e certificado registrado no Ministério do Trabalho e"
+                },
+                {
+                    "linha": 55,
+                    "texto": "Emprego, posse de Carteira Nacional de Habilitação (CNH) – Categoria B e disponibilidade para"
+                },
+                {
+                    "linha": 56,
+                    "texto": "inscrição: R$ 67,00"
+                },
+                {
+                    "linha": 57,
+                    "texto": "viagens."
+                },
+                {
+                    "linha": 58,
+                    "texto": "Cargo                             Remuneração            Carga Horária               Vagas"
+                },
+                {
+                    "linha": 59,
+                    "texto": "Cadastro de Reserva"
+                }
+            ],
+            "elegibilidade": "nao_avaliada",
+            "status_validacao": "pendente"
+        }
+    ]
+}
